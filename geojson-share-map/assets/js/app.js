@@ -36,13 +36,16 @@ featureLayer.on("ready", function (e) {
             var content = "<table class='table table-striped table-bordered table-condensed'>";
             if (userFields.length > 0) {
                 $.each(userFields, function (index, property) {
+                    console.log('1: ' + property);
+                    if (property == 'marker-symbol' || property == 'marker-size' || property == 'marker-color') { return; }
                     if (e.target.feature.properties[property]) {
                         content += "<tr><th>" + property + "</th><td>" + formatProperty(e.target.feature.properties[property]) + "</td></tr>";
                     }
                 });
             } else {
                 $.each(e.target.feature.properties, function (index, property) {
-                    if (property) {
+                    if (property !== undefined) {
+                        if (index == 'marker-symbol' || index == 'marker-size' || index == 'marker-color') { return; }
                         content += "<tr><th>" + index + "</th><td>" + formatProperty(property) + "</td></tr>";
                     }
                 });
@@ -96,7 +99,6 @@ featureLayer.once("ready", function (e) {
         if (featureLayer.getLayers().length === 0) {
             map.fitWorld();
         } else if (bboxBounds !== undefined) {
-            console.log('bbox found');
             map.fitBounds(bboxBounds);
         } else {
             map.fitBounds(this.getBounds(), {
