@@ -95,6 +95,9 @@ featureLayer.once("ready", function (e) {
     } else {
         if (featureLayer.getLayers().length === 0) {
             map.fitWorld();
+        } else if (bboxBounds !== undefined) {
+            console.log('bbox found');
+            map.fitBounds(bboxBounds);
         } else {
             map.fitBounds(this.getBounds(), {
                 maxZoom: 17
