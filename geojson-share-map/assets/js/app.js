@@ -273,7 +273,11 @@ $("#auto-refresh").click(function () {
 });
 
 $("#full-extent-btn").click(function () {
-    map.fitBounds(featureLayer.getBounds());
+    if (bboxBounds !== undefined) {
+        map.fitBounds(bboxBounds);
+    } else {
+        map.fitBounds(featureLayer.getBounds());
+    }
     $(".navbar-collapse.in").collapse("hide");
     return false;
 });
