@@ -23,7 +23,7 @@ input[type="radio"], input[type="checkbox"] {
     transition: all 0.25s ease-out;
 }
 #map {
-  width: 100%;
+  width: auto;
   height: 100%;
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
