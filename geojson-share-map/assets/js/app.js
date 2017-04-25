@@ -312,7 +312,7 @@ $("#sidebar-hide-btn").click(function () {
 $(document).ready(function () {
     fetchData();
     $("#download").attr("href", decodeURIComponent(urlParams.src));
-    $("#sidebar").hide();
+    //$("#sidebar").hide();
 });
 
 $(document).on("click", ".feature-row", function (e) {
