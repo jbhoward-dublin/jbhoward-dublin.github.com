@@ -10,7 +10,7 @@
 
 ### geojson-share-map
 
-Forked from @bmcbride [https://github.com/bmcbride/geojson-share-maps](https://github.com/bmcbride/geojson-share-maps)
+Forked from @bmcbride [https://github.com/bmcbride/geojson-share-maps](https://github.com/bmcbride/geojson-share-maps) for use with IIIF-GeoJSON-maps plugin for the Mirador image viewer
 
 * https://jbhoward-dublin.github.io/geojson-share-map/?src=https%3A%2F%2Fdev01.data.ucd.ie%2Fapi%2Fgeo%2Fv1%2Fdl%2FgeoFilter%3Did(ivrla%3A34717)%26format%3Dgeojson&title_field=title&title=80%20Saint%20Stephen%27s%20Green,%20Dublin%202,%20Co.%20Dublin,%20Ireland&cluster=true&iframe=true
 
