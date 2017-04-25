@@ -36,7 +36,6 @@ featureLayer.on("ready", function (e) {
             var content = "<table class='table table-striped table-bordered table-condensed'>";
             if (userFields.length > 0) {
                 $.each(userFields, function (index, property) {
-                    console.log('1: ' + property);
                     if (property == 'marker-symbol' || property == 'marker-size' || property == 'marker-color') { return; }
                     if (e.target.feature.properties[property]) {
                         content += "<tr><th>" + property + "</th><td>" + formatProperty(e.target.feature.properties[property]) + "</td></tr>";
@@ -223,6 +222,7 @@ if (urlParams.fields) {
 if (urlParams.iframe && (urlParams.iframe == 'true') || urlParams.embed && (urlParams.embed == 'true')) {
     $(".navbar-header").addClass("hidden");
     $(".full-extent").addClass("hidden");
+    $("#download").addClass("hidden");
 }
 
 if (urlParams.cluster && (urlParams.cluster === "false" || urlParams.cluster === "False" || urlParams.cluster === "0")) {
@@ -311,7 +311,7 @@ $("#sidebar-hide-btn").click(function () {
 
 $(document).ready(function () {
     fetchData();
-    $("#download").attr("href", urlParams.src);
+    $("#download").attr("href", decodeURIComponent(urlParams.src));
     $("#sidebar").hide();
 });
 
