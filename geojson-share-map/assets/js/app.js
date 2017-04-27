@@ -33,10 +33,14 @@ featureLayer.on("ready", function (e) {
         $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td class="feature-name">' + getTitle(layer) + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
         layer.on("click", function (e) {
             map.closePopup();
+            var pid; /* local UCD */
             var content = "<table class='table table-striped table-bordered table-condensed'>";
             if (userFields.length > 0) {
                 $.each(userFields, function (index, property) {
                     if (property == 'marker-symbol' || property == 'marker-size' || property == 'marker-color') { return; }
+                    if (property == 'pid') { /* local UCD */
+                        pid = e.target.feature.properties[property];
+                    }
                     if (e.target.feature.properties[property]) {
                         content += "<tr><th>" + property + "</th><td>" + formatProperty(e.target.feature.properties[property]) + "</td></tr>";
                     }
@@ -47,7 +51,18 @@ featureLayer.on("ready", function (e) {
                         if (index == 'marker-symbol' || index == 'marker-size' || index == 'marker-color') { return; }
                         content += "<tr><th>" + index + "</th><td>" + formatProperty(property) + "</td></tr>";
                     }
+                    alert('index == '+index+' ; property == '+property);
+                    if (index == 'pid') { /* local UCD */
+                        alert('2')
+                        pid = property;
+                    }
                 });
+            }
+            if (pid !== undefined && pid !== null) {
+                content += "<tr><th>"+ '<a class="bs-tooltip" data-toggle="tooltip" title=""' +
+                ' data-placement="top" href="/view-media/'+pid+'/none?manifest=https://data.ucd.ie/api/img/manifests/'+pid+'" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="/get/'+ pid +'/thumbnail" alt="IIIF drag and drop link"></a>' +"</th><td>" + 
+                '<a class="bs-tooltip" data-toggle="tooltip" title=""' +
+                ' data-placement="top" href="/view-media/'+pid+'/none?manifest=https://data.ucd.ie/api/img/manifests/'+pid+'" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted iiif-logo pull-left" src="assets/img/logo-iiif-34x30.png" alt="IIIF drag and drop link"></a>&nbsp;To view, drag preview image or IIIF icon to the view screen' + "</td></tr>";
             }
             content += "<table>";
             $("#feature-title").html(getTitle(e.target));
