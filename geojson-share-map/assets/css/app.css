@@ -120,6 +120,15 @@ input[type="radio"], input[type="checkbox"] {
   padding: 3px 20px;
   white-space: nowrap;
 }
+.iiif-logo {
+  max-height: 22px;
+  vertical-align: middle;
+}
+.thumbnail-geo {
+  min-width: 70px;
+  max-height: 120px;
+  text-align: center;
+}
 @media (max-width: 992px) {
   .navbar .navbar-brand {
     font-size: 18px;
