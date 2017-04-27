@@ -59,9 +59,9 @@ featureLayer.on("ready", function (e) {
                 });
             }
             if (pid !== undefined && pid !== null) {
-                content += "<tr><th>"+ '<a class="bs-tooltip" data-toggle="tooltip" title=""' +
+                content += "<tr><th>"+ '<a class="bs-tooltip thumbnail-iiif" onClick="return false;" data-toggle="tooltip" title=""' +
                 ' data-placement="top" href="https://digital.ucd.ie/view-media/'+pid+'/none?manifest=https://data.ucd.ie/api/img/manifests/'+pid+'" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/'+ pid +'/thumbnail" alt="IIIF drag and drop link"></a>' +"</th><td>" + 
-                '<a class="bs-tooltip" data-toggle="tooltip" title=""' +
+                '<a class="bs-tooltip" onClick="return false;" data-toggle="tooltip drag-and-drop-iiif" title=""' +
                 ' data-placement="top" href="https://digital.ucd.ie/view-media/'+pid+'/none?manifest=https://data.ucd.ie/api/img/manifests/'+pid+'" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted iiif-logo pull-left" src="assets/img/logo-iiif-34x30.png" alt="IIIF drag and drop link"></a>&nbsp;To view, drag preview image or IIIF icon to the view screen' + "</td></tr>";
             }
             content += "<table>";
@@ -322,6 +322,16 @@ $("#sidebar-toggle-btn").click(function () {
 $("#sidebar-hide-btn").click(function () {
     $("#sidebar").hide();
     map.invalidateSize();
+});
+
+$("a.thumbnail-iiif").click(function () {
+  event.preventDefault();
+  return;
+});
+
+$("a.drag-and-drop-iiif").click(function () {
+  console.log('clicked');
+  return;
 });
 
 $(document).ready(function () {
