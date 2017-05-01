@@ -58,9 +58,7 @@ featureLayer.on("ready", function (e) {
                         if (index == 'marker-symbol' || index == 'marker-size' || index == 'marker-color') { return; }
                         content += "<tr><th>" + index + "</th><td>" + formatProperty(property) + "</td></tr>";
                     }
-                    alert('index == '+index+' ; property == '+property);
                     if (index == 'pid') { /* local UCD */
-                        alert('2')
                         pid = property;
                     }
                 });
