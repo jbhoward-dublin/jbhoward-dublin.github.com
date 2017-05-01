@@ -26,8 +26,9 @@
   </head>
 
   <body>
-    <div style="width: 100%; position: absolute; top: 0; height:38px; background-color: #000; opacity: 1.0">
-      <div class="navbar-inverse navbar-collapse collapse" style="position:absolute; top: 0; height:38px!important;">
+    
+    <div id="navigation-top" style="width: 100%; position: absolute; top: 0; height:38px; background-color: #000; opacity: 1.0">
+      <div class="navbar-inverse navbar-collapse collapse" style="position:absolute; left: 0; top: 0; height:38px!important;">
         <div class="navbar-header" style="margin-top: -7px;">
           <div class="navbar-icon-container">
             <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
@@ -35,7 +36,7 @@
           </div>
           <span class="navbar-brand" href="#" name="title" id="navbar-title">UCD Digital Library</span>
         </div>
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav navbar-right">
             <li><a id="refresh-btn" href="#"><i class="fa fa-refresh white"></i>&nbsp;&nbsp;Refresh</a></li>
             <li><a id="full-extent-btn" href="#"><i class="fa fa-arrows-alt white"></i>&nbsp;&nbsp;Full Extent</a></li>
             <li><a href="" id="download" download="" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download Data</a></li>
@@ -141,4 +142,3 @@
     <script src="assets/js/app.js"></script>
   </body>
 </html>
-
