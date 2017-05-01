@@ -4,19 +4,26 @@ var titleField, cluster, userFields =[], urlParams = {
 };
 
 var mapboxOSM = L.tileLayer("https://{s}.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=" + L.mapbox.accessToken, {
-    maxZoom: 19,
+    maxZoom: 21,
+    subdomains:[ "a", "b", "c", "d"],
+    attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
+});
+
+var mapboxLight = L.tileLayer("https://api.tiles.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.png?access_token=" + L.mapbox.accessToken, {
+    maxZoom: 21,
     subdomains:[ "a", "b", "c", "d"],
     attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
 });
 
 var mapboxSat = L.tileLayer("https://{s}.tiles.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=" + L.mapbox.accessToken, {
-    maxZoom: 19,
+    maxZoom: 20 ,
     subdomains:[ "a", "b", "c", "d"],
     attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
 });
 
 var baseLayers = {
     "Street Map": mapboxOSM,
+    "Light Map": mapboxLight,
     "Aerial Imagery": mapboxSat
 };
 
@@ -127,7 +134,6 @@ var map = L.map("map", {
     layers:[mapboxOSM]
 }).fitWorld();
 map.attributionControl.setPrefix("");
-
 var layerControl = L.control.layers(baseLayers, null, {
     collapsed: document.body.clientWidth <= 767 ? true: false
 }).addTo(map);
@@ -232,11 +238,11 @@ if (urlParams.fields) {
     });
 }
 
-/* JH additionsl */
+/* additions */
 
 if (urlParams.iframe && (urlParams.iframe == 'true') || urlParams.embed && (urlParams.embed == 'true')) {
     $(".navbar-header").addClass("hidden");
-    $(".full-extent").addClass("hidden");
+    $("#refresh-btn").addClass("hidden");
     $("#download").addClass("hidden");
 }
 
@@ -333,11 +339,30 @@ $("a.drag-and-drop-iiif").click(function () {
   console.log('clicked');
   return;
 });
+/* drop header etc with small split Mirador screens */
+function adjustStyle(width) {
+    width = parseInt(width);
+    if (width < 767) {
+        $("#navigation-top").addClass("hidden");
+        $("body").css("padding-top",0);
+        //$("#sidebar").hide();
+        //map.invalidateSize();
+    } else if (width >= 767) {
+        $("#navigation-top").removeClass("hidden");
+        $("body").css("padding-top","38px");
+        //$("#sidebar").show();
+    } 
+}
+$(function() {
+    adjustStyle($(this).width());
+    $(window).resize(function() {
+        adjustStyle($(this).width());
+    });
+});
 
 $(document).ready(function () {
     fetchData();
     $("#download").attr("href", decodeURIComponent(urlParams.src));
-    //$("#sidebar").hide();
 });
 
 $(document).on("click", ".feature-row", function (e) {
