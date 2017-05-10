@@ -10,6 +10,9 @@
 
 For the Mirador IIIF image viewer plugin, see https://github.com/jbhoward-dublin/iiif-imageManipulation
 
+![Demo image](IIIF-imageManipulation/demo/IIIF-imageManipulation_demo-01.gif)
+
+
 ### geojson-share-map
 
 Forked from @bmcbride [https://github.com/bmcbride/geojson-share-maps](https://github.com/bmcbride/geojson-share-maps) for use with IIIF-GeoJSON-maps plugin for the Mirador image viewer
