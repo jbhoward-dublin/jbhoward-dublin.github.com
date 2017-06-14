@@ -23,9 +23,10 @@ input[type="radio"], input[type="checkbox"] {
     transition: all 0.25s ease-out;
 }
 #map {
-  width: auto;
+  width: 100%;
   height: 100%;
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  opacity: 1.0;
 }
 #loading {
   background-color: rgba(0, 0, 0, 0.5);
@@ -145,7 +146,7 @@ input[type="radio"], input[type="checkbox"] {
   border-color: rgba(0,0,0,.4);
   background-clip: padding-box;
 }
-/* JH */
+
 @media only screen and (min-width: 620px) {
     .collapse {
         display: block;
