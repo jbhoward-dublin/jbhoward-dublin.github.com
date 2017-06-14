@@ -16,7 +16,7 @@ var mapboxLight = L.tileLayer("https://api.tiles.mapbox.com/v4/mapbox.light/{z}/
 });
 
 var mapboxSat = L.tileLayer("https://{s}.tiles.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=" + L.mapbox.accessToken, {
-    maxZoom: 20 ,
+    maxZoom: 20,
     subdomains:[ "a", "b", "c", "d"],
     attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
 });
@@ -33,19 +33,45 @@ var markerClusters = new L.MarkerClusterGroup({
     zoomToBoundsOnClick: true
 });
 
-var featureLayer = L.mapbox.featureLayer();
+var featureLayer = L.mapbox.featureLayer(null, {
+    style: {
+        weight: 2,
+        color: '#000000',
+        fillColor: '#FF0000',
+        fillOpacity: 0.3
+    }
+});
+
+var contextLayer = L.mapbox.featureLayer(null, {
+    style: {
+        weight: 2,
+        color: '#000000',
+        fillColor: '#ff7800',
+        fillOpacity: 0.1
+    }
+});
+
+var group = new L.featureGroup([featureLayer, contextLayer]);
 
 featureLayer.on("ready", function (e) {
     featureLayer.eachLayer(function (layer) {
         $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '"><td class="feature-name">' + getTitle(layer) + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
         layer.on("click", function (e) {
             map.closePopup();
-            var pid; /* local UCD */
+            var pid, category; /* local UCD */
             var content = "<table class='table table-striped table-bordered table-condensed'>";
             if (userFields.length > 0) {
                 $.each(userFields, function (index, property) {
-                    if (property == 'marker-symbol' || property == 'marker-size' || property == 'marker-color') { return; }
-                    if (property == 'pid') { /* local UCD */
+                    if (property == 'marker-symbol' || property == 'marker-size' || property == 'marker-color') {
+                        return;
+                    }
+                    if (property == 'category') {
+                        if (e.target.feature.properties[property] == 'audio') {
+                            category = e.target.feature.properties[property];
+                        }
+                    }
+                    if (property == 'pid') {
+                        /* local UCD */
                         pid = e.target.feature.properties[property];
                     }
                     if (e.target.feature.properties[property]) {
@@ -55,19 +81,26 @@ featureLayer.on("ready", function (e) {
             } else {
                 $.each(e.target.feature.properties, function (index, property) {
                     if (property !== undefined) {
-                        if (index == 'marker-symbol' || index == 'marker-size' || index == 'marker-color') { return; }
+                        if (index == 'marker-symbol' || index == 'marker-size' || index == 'marker-color') {
+                            return;
+                        }
                         content += "<tr><th>" + index + "</th><td>" + formatProperty(property) + "</td></tr>";
                     }
-                    if (index == 'pid') { /* local UCD */
+                    if (index == 'pid') {
+                        /* local UCD */
                         pid = property;
                     }
                 });
             }
-            if (pid !== undefined && pid !== null) {
-                content += "<tr><th>"+ '<a class="bs-tooltip thumbnail-iiif" onClick="return false;" data-toggle="tooltip" title=""' +
-                ' data-placement="top" href="https://digital.ucd.ie/view-media/'+pid+'/none?manifest=https://data.ucd.ie/api/img/manifests/'+pid+'" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/'+ pid +'/thumbnail" alt="IIIF drag and drop link"></a>' +"</th><td>" + 
+            if (pid !== undefined && pid !== null && (category && category == 'audio')) {
+                var mediaURI = getMediaURI(document.location.origin + '/view/' + pid + '.xml', 'audio');
+                content += "<tr><th>" + '<img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/' + pid + '/thumbnail" alt="Audio media">' + "</th><td>" +
+                '<div class="audio-player"></div>' + "</td></tr>";
+            } else if (pid !== undefined && pid !== null) {
+                content += "<tr><th>" + '<a class="bs-tooltip thumbnail-iiif" onClick="return false;" data-toggle="tooltip" title=""' +
+                ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/none?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/' + pid + '/thumbnail" alt="IIIF drag and drop link"></a>' + "</th><td>" +
                 '<a class="bs-tooltip" onClick="return false;" data-toggle="tooltip drag-and-drop-iiif" title=""' +
-                ' data-placement="top" href="https://digital.ucd.ie/view-media/'+pid+'/none?manifest=https://data.ucd.ie/api/img/manifests/'+pid+'" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted iiif-logo pull-left" src="assets/img/logo-iiif-34x30.png" alt="IIIF drag and drop link"></a>&nbsp;To view, drag preview image or IIIF icon to the view screen' + "</td></tr>";
+                ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/none?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted iiif-logo pull-left" src="assets/img/logo-iiif-34x30.png" alt="IIIF drag and drop link"></a>&nbsp;To view, drag preview image or IIIF icon to the view screen' + "</td></tr>";
             }
             content += "<table>";
             $("#feature-title").html(getTitle(e.target));
@@ -75,9 +108,13 @@ featureLayer.on("ready", function (e) {
             $("#featureModal").modal("show");
             $("#share-btn").click(function () {
                 var link = location.toString() + "&id=" + L.stamp(e.target);
-                $("#share-hyperlink").attr("href", link);
-                $("#share-twitter").attr("href", "https://twitter.com/intent/tweet?url=" + encodeURIComponent(link));
-                $("#share-facebook").attr("href", "https://facebook.com/sharer.php?u=" + encodeURIComponent(link));
+                if (urlParams.iframe && (urlParams.iframe == 'true')) {
+                    $("li a#share-hyperlink").addClass("hidden");
+                } else {
+                    $("#share-hyperlink").attr("target", "_blank").attr("href", link);
+                }
+                $("#share-twitter").attr("target", "_blank").attr("href", "https://twitter.com/intent/tweet?url=" + encodeURIComponent(link));
+                $("#share-facebook").attr("target", "_blank").attr("href", "https://facebook.com/sharer.php?u=" + encodeURIComponent(link));
             });
         });
     });
@@ -92,7 +129,8 @@ featureLayer.on("ready", function (e) {
         sortOrder = "asc";
     }
     var featureList = new List("features", {
-        valueNames:[ "feature-name"]
+        valueNames:[ "feature-name"],
+        page: 500
     });
     featureList.sort("feature-name", {
         order: sortOrder
@@ -125,6 +163,11 @@ featureLayer.once("ready", function (e) {
             });
         }
     }
+});
+
+contextLayer.once("ready", function (e) {
+    /* include all polygons & points in viewport */
+    map.fitBounds(group.getBounds());
 });
 
 var map = L.map("map", {
@@ -179,6 +222,14 @@ function fetchData() {
             $("#loading").hide();
         });
     }
+    if (urlParams.ctx && urlParams.ctx != '') {
+        fetchContextLayer();
+    }
+}
+
+function fetchContextLayer() {
+    var contextObject = contextLayer.loadURL(decodeURIComponent(urlParams.ctx));
+    contextObject.addTo(map);
 }
 
 function getTitle(layer) {
@@ -238,10 +289,23 @@ if (urlParams.fields) {
 
 /* additions */
 
-if (urlParams.iframe && (urlParams.iframe == 'true') || urlParams.embed && (urlParams.embed == 'true')) {
+if (urlParams.iframe && (urlParams.iframe == 'true')) {
     $(".navbar-header").addClass("hidden");
     $("#refresh-btn").addClass("hidden");
     $("#download").addClass("hidden");
+}
+if (urlParams.embed && (urlParams.embed == 'true')) {
+    $("#navigation-top").css({"display" : "none", "height" : "0"}); 
+    $("body").css("padding-top","0");
+    $(".navbar-header").addClass("hidden");
+    $("#full-extent-btn").addClass("hidden");
+    $("#refresh-btn").addClass("hidden");
+    $("#download").addClass("hidden");
+    $('#sidebar').addClass("hidden");
+    $('#map').css("width","100%!important");
+} else {
+    //$("body").css("padding-top","38px");
+    $('#map').css("width","auto");
 }
 
 if (urlParams.cluster && (urlParams.cluster === "false" || urlParams.cluster === "False" || urlParams.cluster === "0")) {
@@ -255,8 +319,7 @@ if (urlParams.attribution) {
     map.attributionControl.setPrefix(attribution);
 }
 
-/* JH */
-var fitToBbox;
+/* UCD */
 if (urlParams.src && (urlParams.src.includes("bbox"))) {
     var bbox = urlParams.src;
     bbox = decodeURIComponent(decodeURI(bbox)).match(/bbox\((.*?)\)/i)[1];
@@ -275,16 +338,24 @@ if (urlParams.src && (urlParams.src.includes("bbox"))) {
 
 if (cluster === true) {
     map.addLayer(markerClusters);
-    layerControl.addOverlay(markerClusters, "<span name='title'>GeoJSON Data</span>");
+    layerControl.addOverlay(markerClusters, "<span name='title'>Map markers</span>");
 } else {
     map.addLayer(featureLayer);
-    layerControl.addOverlay(featureLayer, "<span name='title'>GeoJSON Data</span>");
+    layerControl.addOverlay(featureLayer, "<span name='title'>Map markers</span>");
 }
 
 $("#refresh-btn").click(function () {
     fetchData();
     //$(".navbar-collapse.in").collapse("hide");
     return false;
+});
+
+$("#download").click(function () {
+    var href = decodeURIComponent(urlParams.src);
+    var fn = Math.random().toString(36).substr(2, 5) + '.geojson';
+    $(this).attr('download', fn)
+        .attr("href",href);
+    return true;
 });
 
 $("#auto-refresh").click(function () {
@@ -318,6 +389,9 @@ $("#nav-btn").click(function () {
 });
 
 $("#sidebar-toggle-btn").click(function () {
+    if ( $('#sidebar').hasClass("hidden") ) {
+        $('#sidebar').removeClass("hidden");
+    }
     $("#sidebar").toggle();
     map.invalidateSize();
     return false;
@@ -329,38 +403,85 @@ $("#sidebar-hide-btn").click(function () {
 });
 
 $("a.thumbnail-iiif").click(function () {
-  event.preventDefault();
-  return;
+    event.preventDefault();
+    return;
 });
 
 $("a.drag-and-drop-iiif").click(function () {
-  console.log('clicked');
-  return;
+    console.log('clicked');
+    return;
 });
 /* drop header etc with small split Mirador screens */
 function adjustStyle(width) {
     width = parseInt(width);
     if (width < 767) {
         $("#navigation-top").addClass("hidden");
-        $("body").css("padding-top",0);
+        $("body").css("padding-top", 0);
         //$("#sidebar").hide();
         //map.invalidateSize();
     } else if (width >= 767) {
         $("#navigation-top").removeClass("hidden");
-        $("body").css("padding-top","38px");
+        //$("body").css("padding-top", "38px");
         //$("#sidebar").show();
-    } 
+    }
 }
-$(function() {
+$(function () {
     adjustStyle($(this).width());
-    $(window).resize(function() {
+    $(window).resize(function () {
         adjustStyle($(this).width());
     });
 });
 
+function getMediaURI(url, type) {
+    $.ajax({
+        type: 'GET',
+        url: url,
+        dataType: 'xml',
+        success: function (xml, textStatus, jqXHR) {
+            if (type == 'audio') {
+                xmlDoc = $.parseXML(xml),
+                $xml = $(xmlDoc),
+                $(xml).find('relatedItem').each(function () {
+                    if ($(this).attr("type") == 'constituent') {
+                        $(this).find('identifier').each(function () {
+                            if ($(this).attr('type') == 'uri') {
+                                var mediaID = $(this).text();
+                                var mediaURI = 'https://digital.ucd.ie/get/' + mediaID.split('/')[1] + '/content';
+                                if (mediaID) {
+                                    var mediaURI = 'https://digital.ucd.ie/get/' + mediaID.split('/')[1] + '/content';
+                                    $('div.audio-player').append('<audio controls><source src="' + mediaURI + '" type="audio/mpeg"></audio>');
+                                    return; // 'https://digital.ucd.ie/get/' + mediaID.split('/')[1] + '/content';
+                                }
+                            }
+                        });
+                    }
+                });
+                return;
+            }
+            if (type == 'video') {
+                xmlDoc = $.parseXML(xml),
+                $xml = $(xmlDoc),
+                $(xml).find('relatedItem').each(function () {
+                    if ($(this).attr("type") == 'constituent') {
+                        $(this).find('identifier').each(function () {
+                            if ($(this).attr('type') == 'uri') {
+                                var mediaID = $(this).text();
+                                /* capture the URI of the vimeo or youtube and embed it */
+                            }
+                        });
+                    }
+                });
+            
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log('error');
+        }
+    })
+}
+
 $(document).ready(function () {
     fetchData();
-    $("#download").attr("href", decodeURIComponent(urlParams.src));
 });
 
 $(document).on("click", ".feature-row", function (e) {
