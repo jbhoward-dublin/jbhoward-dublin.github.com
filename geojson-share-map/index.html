@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css">
     <link rel="stylesheet" href="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.mapbox.css">
     <link rel="stylesheet" href="assets/css/app.css">
-
     <link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicon-76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicon-120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="assets/img/favicon-152.png">
@@ -26,7 +25,6 @@
   </head>
 
   <body>
-    
     <div id="navigation-top" style="width: 100%; position: absolute; top: 0; height:38px; background-color: #000; opacity: 1.0">
       <div class="navbar-inverse navbar-collapse collapse" style="position:absolute; left: 0; top: 0; height:38px!important;">
         <div class="navbar-header" style="margin-top: -7px;">
@@ -39,11 +37,11 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a id="refresh-btn" href="#"><i class="fa fa-refresh white"></i>&nbsp;&nbsp;Refresh</a></li>
             <li><a id="full-extent-btn" href="#"><i class="fa fa-arrows-alt white"></i>&nbsp;&nbsp;Full Extent</a></li>
-            <li><a href="" id="download" download="" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download Data</a></li>
+            <li><a href="" id="download" download="data.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download Data</a></li>
             <li class="btn-search hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list-alt white"></i>&nbsp;&nbsp;Result list</a></li>
           </ul>
         </div>
-    </div
+    </div>
 
     <div id="container" class="container-top">
       <div id="sidebar">
@@ -91,7 +89,7 @@
         </div>
       </div>
     </div>
-
+    
     <div class="modal fade" id="featureModal" tabindex="-1" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -106,7 +104,9 @@
                 <i class="fa fa-share"></i>&nbsp;Share&nbsp;<span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
+                <!--
                 <li><a href="#" target="_blank" id="share-hyperlink"><i class="fa fa-link"></i>&nbsp;Hyperlink</a></li>
+                -->
                 <li><a href="#" target="_blank" id="share-twitter"><i class="fa fa-twitter"></i>&nbsp;Twitter</a></li>
                 <li><a href="#" target="_blank" id="share-facebook"><i class="fa fa-facebook"></i>&nbsp;Facebook</a></li>
               </ul>
@@ -131,10 +131,13 @@
         color: #fff;
         background: #ee8a65;
       }
+      .audio-player {
+        padding-top: 20px;
+      }
     </style>
     <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
