@@ -376,7 +376,7 @@ $("#auto-refresh").click(function () {
   }
 });
 
-$("#full-extent-btn").click(function () {
+$("#full-extent-btn").click(function () { 
   if (bboxBounds !== undefined) {
     map.fitBounds(bboxBounds);
   } else {
