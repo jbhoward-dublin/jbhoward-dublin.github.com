@@ -20,10 +20,17 @@ var mapboxSat = L.tileLayer("https://{s}.tiles.mapbox.com/v4/mapbox.streets-sate
   attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
 });
 
+var mapboxAncientWorld = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiaXNhd255dSIsImEiOiJBWEh1dUZZIn0.SiiexWxHHESIegSmW8wedQ', {
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  maxZoom: 10,
+  id: 'isawnyu.map-knmctlkh'
+ });
+
 var baseLayers = {
   "Street Map": mapboxOSM,
   "Light Map": mapboxLight,
-  "Aerial Imagery": mapboxSat
+  "Aerial Imagery": mapboxSat,
+  "Ancient World": mapboxAncientWorld 
 };
 
 var markerClusters = new L.MarkerClusterGroup({
@@ -98,16 +105,16 @@ featureLayer.on("ready", function (e) {
       } else if (pid !== undefined && pid !== null) {
         if (urlParams.iframe && (urlParams.iframe == 'true')) {
           content += "<tr><th>" + '<a class="bs-tooltip thumbnail-iiif" onClick="return false;" data-toggle="tooltip" title=""' +
-          ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/none?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/' + pid + '/thumbnail" alt="IIIF drag and drop link"></a>' + "</th><td>" +
+          ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/canvas?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/' + pid + '/thumbnail" alt="IIIF drag and drop link"></a>' + "</th><td>" +
           '<a class="bs-tooltip" onClick="return false;" data-toggle="tooltip drag-and-drop-iiif" title=""' +
-          ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/none?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted iiif-logo pull-left" src="assets/img/logo-iiif-34x30.png" alt="IIIF drag and drop link"></a>&nbsp;To view, drag preview image or IIIF icon to a new tab or window, or to an instance of the Mirador viewer' + "</td></tr>";
+          ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/canvas?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to viewer"><img class="img-responsive results-img muted iiif-logo pull-left" src="assets/img/logo-iiif-34x30.png" alt="IIIF drag and drop link"></a>&nbsp;To view, drag preview image or IIIF icon to a new tab or window, or to an instance of the Mirador viewer' + "</td></tr>";
         }
         else if (!urlParams.iframe && category !== 'audio') {
           content += "<tr><th>" + '<a class="bs-tooltip thumbnail-iiif" data-toggle="tooltip" title=""' +
-          ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/none?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to IIIF viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/' + pid + '/thumbnail" alt="thumbnail preview"></a>' + "</th><td>" +
+          ' data-placement="top" href="https://digital.ucd.ie/view-media/' + pid + '/canvas?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to IIIF viewer"><img class="img-responsive results-img muted thumbnail-geo pull-left" src="https://digital.ucd.ie/get/' + pid + '/thumbnail" alt="thumbnail preview"></a>' + "</th><td>" +
           '<a class="bs-tooltip" data-toggle="tooltip drag-and-drop-iiif" title=""' +
           ' data-placement="top" target="_blank" href="https://digital.ucd.ie/view/' + pid + '" data-original-title="View description">Read a description of this item</a><br /> or</br/>'+
-          '<a class="bs-tooltip thumbnail-iiif" data-toggle="tooltip" title="" target="_blank" href="https://digital.ucd.ie/view-media/' + pid + '/none?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to IIIF viewer">View image(s)</a> by dragging the small thumbnail image to a new tab'+"</td></tr>";
+          '<a class="bs-tooltip thumbnail-iiif" data-toggle="tooltip" title="" target="_blank" href="https://digital.ucd.ie/view-media/' + pid + '/canvas?manifest=https://data.ucd.ie/api/img/manifests/' + pid + '" data-original-title="View content, or drag and drop to IIIF viewer">View image(s)</a> by dragging the small thumbnail image to a new tab'+"</td></tr>";
         }
       }
       content += "<table>";
@@ -138,7 +145,7 @@ featureLayer.on("ready", function (e) {
   }
   var featureList = new List("features", {
     valueNames:[ "feature-name"],
-    page: 1000
+    page: 2000
   });
   featureList.sort("feature-name", {
     order: sortOrder
@@ -272,7 +279,7 @@ function zoomToFeature(id) {
   }
   layer.fire("click");
   /* Hide sidebar and go to the map on small screens */
-  if (document.body.clientWidth <= 767) {
+  if (document.body.clientWidth <= 575) {
     $("#sidebar").hide();
     map.invalidateSize();
   }
@@ -422,12 +429,12 @@ $("a.drag-and-drop-iiif").click(function () {
 /* drop header etc with small split Mirador screens */
 function adjustStyle(width) {
   width = parseInt(width);
-  if (width < 767) {
+  if (width < 575) {
     $("#navigation-top").addClass("hidden");
     $("body").css("padding-top", 0);
     //$("#sidebar").hide();
     //map.invalidateSize();
-  } else if (width >= 767) {
+  } else if (width >= 575) {
     $("#navigation-top").removeClass("hidden");
     //$("body").css("padding-top", "38px");
     //$("#sidebar").show();
